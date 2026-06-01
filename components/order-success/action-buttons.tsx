@@ -7,7 +7,7 @@ export default function ActionButtons() {
   return (
     <div className="flex flex-col gap-3">
       <Button asChild size="lg">
-        <Link href="/tracking">
+        <Link href="/orders/ORDER-001/tracking">
           Lacak Pesanan
         </Link>
       </Button>
@@ -17,7 +17,7 @@ export default function ActionButtons() {
         variant="outline"
         size="lg"
       >
-        <Link href="/">
+        <Link href="/customer">
           Kembali ke Beranda
         </Link>
       </Button>
