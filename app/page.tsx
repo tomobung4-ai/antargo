@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { restaurants } from "@/lib/food/mock-data";
 
 export default function Home() {
   return (
@@ -40,6 +41,9 @@ export default function Home() {
           Mulai dengan membuat akun atau masuk ke akun yang sudah ada.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Button size="lg" variant="outline" className="h-11 px-6" asChild>
+            <Link href={`/restaurant/${restaurants[0].id}`}>Lihat Antargo Food</Link>
+          </Button>
           <Button size="lg" className="h-11 px-6" asChild>
             <Link href="/register">
               Mulai sekarang
@@ -49,6 +53,17 @@ export default function Home() {
           <Button size="lg" variant="outline" className="h-11 px-6" asChild>
             <Link href="/login">Masuk</Link>
           </Button>
+        </div>
+
+        <div className="mt-10 w-full max-w-xl rounded-xl border bg-card p-4 text-left">
+          <p className="mb-3 text-sm font-medium">Demo Antargo Food</p>
+          <div className="flex flex-wrap gap-2">
+            {restaurants.map((restaurant) => (
+              <Button key={restaurant.id} variant="outline" asChild>
+                <Link href={`/restaurant/${restaurant.id}`}>{restaurant.name}</Link>
+              </Button>
+            ))}
+          </div>
         </div>
       </main>
     </div>

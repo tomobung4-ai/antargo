@@ -31,3 +31,4 @@ export interface CartLineItem {
   menuItem: MenuItem;
   quantity: number;
 }
+
