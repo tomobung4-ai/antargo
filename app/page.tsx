@@ -16,7 +16,7 @@ export default function Home() {
           </Link>
           <nav className="flex items-center gap-2">
             <Button variant="ghost" asChild className="hidden sm:inline-flex">
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/driver">Driver</Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/login">Masuk</Link>
