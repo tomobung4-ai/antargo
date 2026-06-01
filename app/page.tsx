@@ -15,6 +15,9 @@ export default function Home() {
             <span className="font-semibold tracking-tight">Antargo</span>
           </Link>
           <nav className="flex items-center gap-2">
+            <Button variant="ghost" asChild className="hidden sm:inline-flex">
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
             <Button variant="ghost" asChild>
               <Link href="/login">Masuk</Link>
             </Button>
