@@ -8,7 +8,7 @@ import OrderFilter, {
   OrderFilterType,
 } from "./order-filter";
 
-import { Order } from "@/lib/mock-orders";
+import { Order } from "@/lib/store/order-store";
 
 type Props = {
   orders: Order[];

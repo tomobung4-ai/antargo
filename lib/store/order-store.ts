@@ -40,6 +40,10 @@ createdAt: string;
 type OrderStore = {
 orders: Order[];
 
+createOrder: (
+    order: Order
+  ) => void;
+
 updateOrderStatus: (
 id: string,
 status: OrderStatus
@@ -113,6 +117,10 @@ items: [
 export const useOrderStore =
   create<OrderStore>((set, get) => ({
     orders: initialOrders,
+createOrder: (order) =>
+  set((state) => ({
+    orders: [order, ...state.orders],
+  })),
 
     updateOrderStatus: (
       id: string,
