@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 
 import {
   useOrderStore,
@@ -14,27 +15,42 @@ import {
 } from "@/components/ui/card";
 
 export default function DriverOrdersPage() {
-  const orders = useOrderStore(
-    (state) =>
-      state.orders.filter(
+  const allOrders = useOrderStore(
+    (state) => state.orders
+  );
+
+  const orders = useMemo(
+    () =>
+      allOrders.filter(
         (order) => order.status === "ready"
-      )
+      ),
+    [allOrders]
   );
 
   const updateOrderStatus =
-    useOrderStore(
-      (state) => state.updateOrderStatus
-    );
+  useOrderStore(
+    (state) =>
+      state.updateOrderStatus
+  );
 
+const assignDriver =
+  useOrderStore(
+    (state) =>
+      state.assignDriver
+  );
   const handleAccept = (
-    order: Order
-  ) => {
-    updateOrderStatus(
-      order.id,
-      "picked_up"
-    );
-  };
+  orderId: string
+) => {
+  assignDriver(
+    orderId,
+    "Driver AntarGo"
+  );
 
+  updateOrderStatus(
+    orderId,
+    "picked_up"
+  );
+};
   return (
     <main className="container mx-auto p-4">
       <h1 className="mb-6 text-2xl font-bold">
@@ -69,10 +85,10 @@ export default function DriverOrdersPage() {
 
               <div className="flex gap-2">
                 <Button
-                  onClick={() =>
-                    handleAccept(order)
-                  }
-                >
+  onClick={() =>
+    handleAccept(order.id)
+  }
+>
                   Ambil Order
                 </Button>
 

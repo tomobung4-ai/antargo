@@ -1,29 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   useOrderStore,
-  Order,
   OrderStatus,
 } from "@/lib/store/order-store";
 
-import {
-  OrdersHeader,
-} from "@/components/merchant-orders/orders-header";
+import { Button } from "@/components/ui/button";
 
 import {
-  OrdersTabs,
-  OrderFilter,
-} from "@/components/merchant-orders/orders-tabs";
-
-import {
-  OrderCard,
-} from "@/components/merchant-orders/order-card";
-
-import {
-  OrderDetailDialog,
-} from "@/components/merchant-orders/order-detail-dialog";
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 
 export default function MerchantOrdersPage() {
   const orders = useOrderStore(
@@ -32,132 +21,153 @@ export default function MerchantOrdersPage() {
 
   const updateOrderStatus =
     useOrderStore(
-      (state) => state.updateOrderStatus
+      (state) =>
+        state.updateOrderStatus
     );
 
-  const [filter, setFilter] =
-    useState<OrderFilter>("all");
+  const sortedOrders = useMemo(
+    () => [...orders].reverse(),
+    [orders]
+  );
 
-  const [selectedOrder, setSelectedOrder] =
-    useState<Order | null>(null);
-
-  const [detailOpen, setDetailOpen] =
-    useState(false);
-
-  const statistics = useMemo(() => {
-    return {
-      newOrders: orders.filter(
-        (o) => o.status === "new"
-      ).length,
-
-      preparingOrders: orders.filter(
-        (o) =>
-          o.status === "accepted" ||
-          o.status === "preparing"
-      ).length,
-
-      readyOrders: orders.filter(
-        (o) => o.status === "ready"
-      ).length,
-
-      completedOrders: orders.filter(
-        (o) => o.status === "completed"
-      ).length,
-    };
-  }, [orders]);
-
-  const filteredOrders = useMemo(() => {
-    if (filter === "all") {
-      return orders;
-    }
-
-    return orders.filter(
-      (order) =>
-        order.status === filter
-    );
-  }, [orders, filter]);
-
-  const handleViewDetail = (
-    order: Order
-  ) => {
-    setSelectedOrder(order);
-    setDetailOpen(true);
-  };
-
-  const handleStatusChange = (
+  const handleNextStatus = (
     orderId: string,
-    status: OrderStatus
+    currentStatus: OrderStatus
   ) => {
+    const flow: Record<
+      OrderStatus,
+      OrderStatus
+    > = {
+      new: "accepted",
+      accepted: "preparing",
+      preparing: "ready",
+      ready: "ready",
+      driver_assigned: "picked_up",
+      picked_up: "on_the_way",
+      on_the_way: "completed",
+      completed: "completed",
+      cancelled: "cancelled",
+    };
+
     updateOrderStatus(
       orderId,
-      status
+      flow[currentStatus]
     );
+  };
 
-    if (
-      selectedOrder &&
-      selectedOrder.id === orderId
-    ) {
-      setSelectedOrder({
-        ...selectedOrder,
-        status,
-      });
+  const getButtonLabel = (
+    status: OrderStatus
+  ) => {
+    switch (status) {
+      case "new":
+        return "Terima Order";
+
+      case "accepted":
+        return "Mulai Masak";
+
+      case "preparing":
+        return "Siap Diambil";
+
+      case "ready":
+        return "Menunggu Driver";
+
+      default:
+        return "Update";
     }
   };
 
   return (
-    <main className="mx-auto max-w-7xl space-y-6 p-4 pb-10">
-      <OrdersHeader
-        newOrders={statistics.newOrders}
-        preparingOrders={
-          statistics.preparingOrders
-        }
-        readyOrders={
-          statistics.readyOrders
-        }
-        completedOrders={
-          statistics.completedOrders
-        }
-      />
+    <main className="container mx-auto p-4">
+      <h1 className="mb-6 text-2xl font-bold">
+        Order Merchant
+      </h1>
 
-      <OrdersTabs
-        value={filter}
-        onChange={setFilter}
-      />
+      <div className="space-y-4">
+        {sortedOrders.length === 0 && (
+          <Card>
+            <CardContent className="p-6 text-center">
+              Belum ada order
+            </CardContent>
+          </Card>
+        )}
 
-      {filteredOrders.length === 0 ? (
-        <div className="rounded-2xl border bg-card p-10 text-center">
-          <p className="font-medium">
-            Tidak ada pesanan
-          </p>
+        {sortedOrders.map((order) => (
+          <Card key={order.id}>
+            <CardContent className="space-y-4 p-4">
+              <div>
+                <p className="font-bold">
+                  {order.id}
+                </p>
 
-          <p className="mt-1 text-sm text-muted-foreground">
-            Belum ada pesanan pada status ini.
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-          {filteredOrders.map(
-            (order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                onViewDetail={
-                  handleViewDetail
-                }
-                onStatusChange={
-                  handleStatusChange
-                }
-              />
-            )
-          )}
-        </div>
-      )}
+                <p>
+                  {order.restaurantName}
+                </p>
 
-      <OrderDetailDialog
-        order={selectedOrder}
-        open={detailOpen}
-        onOpenChange={setDetailOpen}
-      />
+                <p className="text-sm text-muted-foreground">
+                  {order.customerName}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">
+                    Status
+                  </span>
+
+                  <p className="font-medium capitalize">
+                    {order.status}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground">
+                    Total
+                  </span>
+
+                  <p className="font-medium">
+                    Rp{" "}
+                    {order.total.toLocaleString(
+                      "id-ID"
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                {order.status !==
+                  "completed" &&
+                  order.status !==
+                    "cancelled" &&
+                  order.status !==
+                    "ready" && (
+                    <Button
+                      onClick={() =>
+                        handleNextStatus(
+                          order.id,
+                          order.status
+                        )
+                      }
+                    >
+                      {getButtonLabel(
+                        order.status
+                      )}
+                    </Button>
+                  )}
+
+                {order.status ===
+                  "ready" && (
+                  <Button
+                    disabled
+                    variant="secondary"
+                  >
+                    Menunggu Driver
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </main>
   );
 }

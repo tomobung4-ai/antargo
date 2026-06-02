@@ -1,50 +1,58 @@
 import { Badge } from "@/components/ui/badge";
 
+export type DriverOrderStatus =
+  | "available"
+  | "accepted"
+  | "picked_up"
+  | "on_the_way"
+  | "completed";
+
 type Props = {
-  status:
-    | "available"
-    | "accepted"
-    | "picked_up"
-    | "on_the_way"
-    | "completed";
+  status: DriverOrderStatus;
 };
 
 const statusMap = {
   available: {
     label: "Tersedia",
     className:
-      "bg-blue-100 text-blue-700 hover:bg-blue-100",
+      "bg-blue-100 text-blue-700",
   },
+
   accepted: {
     label: "Diterima",
     className:
-      "bg-amber-100 text-amber-700 hover:bg-amber-100",
+      "bg-amber-100 text-amber-700",
   },
+
   picked_up: {
     label: "Diambil",
     className:
-      "bg-purple-100 text-purple-700 hover:bg-purple-100",
+      "bg-purple-100 text-purple-700",
   },
+
   on_the_way: {
     label: "Dalam Perjalanan",
     className:
-      "bg-orange-100 text-orange-700 hover:bg-orange-100",
+      "bg-orange-100 text-orange-700",
   },
+
   completed: {
     label: "Selesai",
     className:
-      "bg-green-100 text-green-700 hover:bg-green-100",
+      "bg-green-100 text-green-700",
   },
 };
 
 export function OrderStatusBadge({
   status,
 }: Props) {
-  const current = statusMap[status];
-
   return (
-    <Badge className={current.className}>
-      {current.label}
+    <Badge
+      className={
+        statusMap[status].className
+      }
+    >
+      {statusMap[status].label}
     </Badge>
   );
 }

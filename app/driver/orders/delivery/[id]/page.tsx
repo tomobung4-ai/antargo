@@ -1,12 +1,12 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
-  driverOrders,
-  DriverOrder,
-} from "@/lib/mock-driver-orders";
+  useOrderStore,
+  OrderStatus,
+} from "@/lib/store/order-store";
 
 import {
   Card,
@@ -37,30 +37,44 @@ const steps = [
 export default function DeliveryDetailPage({
   params,
 }: Props) {
+  const getOrderById =
+    useOrderStore(
+      (state) => state.getOrderById
+    );
+
+  const updateOrderStatus =
+    useOrderStore(
+      (state) =>
+        state.updateOrderStatus
+    );
+
   const order = useMemo(
     () =>
-      driverOrders.find(
-        (item) => item.id === params.id
-      ),
-    [params.id]
+      getOrderById(params.id),
+    [params.id, getOrderById]
   );
 
   if (!order) {
     notFound();
   }
 
-  const [status, setStatus] =
-    useState<DriverOrder["status"]>(
-      order.status
-    );
-
-  const currentStep = {
+  const stepMap: Record<
+    OrderStatus,
+    number
+  > = {
+    new: 0,
     accepted: 1,
+    preparing: 1,
+    ready: 1,
+    driver_assigned: 1,
     picked_up: 2,
     on_the_way: 3,
     completed: 4,
-    available: 0,
-  }[status];
+    cancelled: 0,
+  };
+
+  const currentStep =
+    stepMap[order.status];
 
   return (
     <div className="container mx-auto space-y-6 p-4">
@@ -69,7 +83,21 @@ export default function DeliveryDetailPage({
           Delivery Detail
         </h1>
 
-        <OrderStatusBadge status={status} />
+        <OrderStatusBadge
+          status={
+            order.status === "new" ||
+            order.status ===
+              "preparing" ||
+            order.status ===
+              "ready" ||
+            order.status ===
+              "driver_assigned" ||
+            order.status ===
+              "cancelled"
+              ? "accepted"
+              : order.status
+          }
+        />
       </div>
 
       <Card>
@@ -107,7 +135,7 @@ export default function DeliveryDetailPage({
       <Card>
         <CardHeader>
           <CardTitle>
-            Ringkasan
+            Ringkasan Pesanan
           </CardTitle>
         </CardHeader>
 
@@ -116,7 +144,7 @@ export default function DeliveryDetailPage({
             <span>Total</span>
 
             <span>
-              Rp
+              Rp{" "}
               {order.total.toLocaleString(
                 "id-ID"
               )}
@@ -125,9 +153,28 @@ export default function DeliveryDetailPage({
 
           <Separator className="my-3" />
 
-          <div className="flex justify-between">
-            <span>Jarak</span>
-            <span>{order.distance}</span>
+          <div className="space-y-2">
+            {order.items.map((item) => (
+              <div
+                key={item.id}
+                className="flex justify-between"
+              >
+                <span>
+                  {item.quantity}x{" "}
+                  {item.name}
+                </span>
+
+                <span>
+                  Rp{" "}
+                  {(
+                    item.price *
+                    item.quantity
+                  ).toLocaleString(
+                    "id-ID"
+                  )}
+                </span>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -141,60 +188,76 @@ export default function DeliveryDetailPage({
 
         <CardContent>
           <div className="space-y-4">
-            {steps.map((step, index) => (
-              <div
-                key={step}
-                className="flex items-center gap-3"
-              >
+            {steps.map(
+              (step, index) => (
                 <div
-                  className={`h-4 w-4 rounded-full ${
-                    index <= currentStep
-                      ? "bg-green-500"
-                      : "bg-gray-300"
-                  }`}
-                />
+                  key={step}
+                  className="flex items-center gap-3"
+                >
+                  <div
+                    className={`h-4 w-4 rounded-full ${
+                      index <=
+                      currentStep
+                        ? "bg-green-500"
+                        : "bg-gray-300"
+                    }`}
+                  />
 
-                <span>{step}</span>
-              </div>
-            ))}
+                  <span>{step}</span>
+                </div>
+              )
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {status === "accepted" && (
+      {order.status ===
+        "accepted" && (
         <Button
           className="w-full"
           onClick={() =>
-            setStatus("picked_up")
+            updateOrderStatus(
+              order.id,
+              "picked_up"
+            )
           }
         >
           Sampai Restoran
         </Button>
       )}
 
-      {status === "picked_up" && (
+      {order.status ===
+        "picked_up" && (
         <Button
           className="w-full"
           onClick={() =>
-            setStatus("on_the_way")
+            updateOrderStatus(
+              order.id,
+              "on_the_way"
+            )
           }
         >
           Dalam Perjalanan
         </Button>
       )}
 
-      {status === "on_the_way" && (
+      {order.status ===
+        "on_the_way" && (
         <Button
           className="w-full"
           onClick={() =>
-            setStatus("completed")
+            updateOrderStatus(
+              order.id,
+              "completed"
+            )
           }
         >
           Selesaikan Pengiriman
         </Button>
       )}
 
-      {status === "completed" && (
+      {order.status ===
+        "completed" && (
         <div className="rounded-lg bg-green-100 p-4 text-center font-medium text-green-700">
           Pengiriman Selesai
         </div>
