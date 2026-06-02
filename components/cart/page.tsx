@@ -20,7 +20,7 @@ export default function CartPage() {
   const deliveryFee = 12000;
   const serviceFee = 3000;
 
-  const increaseQuantity = (id: number) => {
+  const increaseQuantity = (id: string) => {
     setItems((prev) =>
       prev.map((item) =>
         item.id === id
@@ -33,7 +33,7 @@ export default function CartPage() {
     );
   };
 
-  const decreaseQuantity = (id: number) => {
+  const decreaseQuantity = (id: string) => {
     setItems((prev) =>
       prev.map((item) =>
         item.id === id
@@ -49,7 +49,7 @@ export default function CartPage() {
     );
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     setItems((prev) =>
       prev.filter((item) => item.id !== id)
     );
@@ -105,13 +105,13 @@ export default function CartPage() {
               subtotal={subtotal}
               deliveryFee={deliveryFee}
               serviceFee={serviceFee}
-              total={grandTotal}
+              
             />
           </>
         )}
       </div>
 
-      <CheckoutBar total={grandTotal} />
+      
     </main>
   );
 }

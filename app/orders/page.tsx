@@ -1,22 +1,33 @@
-import OrderList from "@/components/order-history/order-list";
-import { mockOrders } from "@/lib/mock-orders";
+"use client";
+
+import { Order } from "@/lib/store/order-store";
+import { useOrderStore } from "@/lib/store/order-store";
 
 export default function OrdersPage() {
-  return (
-    <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto max-w-2xl px-4 py-5">
-        <div className="mb-5">
-          <h1 className="text-2xl font-bold">
-            Riwayat Pesanan
-          </h1>
+const orders = useOrderStore(
+(state) => state.orders
+);
 
-          <p className="text-sm text-muted-foreground">
-            Lihat semua pesanan Anda di Antargo Food
-          </p>
-        </div>
+return ( <main className="p-4"> <h1 className="text-2xl font-bold">
+Semua Order </h1>
 
-        <OrderList orders={mockOrders} />
+  <div className="mt-4 space-y-4">
+    {orders.map((order: Order) => (
+      <div
+        key={order.id}
+        className="rounded-lg border p-4"
+      >
+        <p>{order.id}</p>
+
+        <p>
+          {order.restaurantName}
+        </p>
+
+        <p>{order.status}</p>
       </div>
-    </main>
-  );
+    ))}
+  </div>
+</main>
+
+);
 }

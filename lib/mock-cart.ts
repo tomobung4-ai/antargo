@@ -1,5 +1,5 @@
 export type CartItemType = {
-  id: number;
+  id: string;
   name: string;
   restaurant: string;
   image: string;
@@ -9,7 +9,7 @@ export type CartItemType = {
 
 export const mockCartItems: CartItemType[] = [
   {
-    id: 1,
+    id: "1",
     name: "Nasi Goreng Spesial",
     restaurant: "Warung Nusantara",
     image: "/food/nasi-goreng.jpg",
@@ -17,7 +17,7 @@ export const mockCartItems: CartItemType[] = [
     quantity: 2,
   },
   {
-    id: 2,
+    id: "2",
     name: "Ayam Geprek Level 3",
     restaurant: "Geprek Mantap",
     image: "/food/ayam-geprek.jpg",
@@ -25,7 +25,7 @@ export const mockCartItems: CartItemType[] = [
     quantity: 1,
   },
   {
-    id: 3,
+    id: "3",
     name: "Es Teh Manis",
     restaurant: "Warung Nusantara",
     image: "/food/es-teh.jpg",

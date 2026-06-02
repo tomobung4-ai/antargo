@@ -20,7 +20,7 @@ useState<CartItemType[]>(mockCartItems);
 const deliveryFee = 12000;
 const serviceFee = 3000;
 
-const increaseQuantity = (id: number) => {
+const increaseQuantity = (id: string) => {
 setItems((prev) =>
 prev.map((item) =>
 item.id === id
@@ -30,7 +30,7 @@ item.id === id
 );
 };
 
-const decreaseQuantity = (id: number) => {
+const decreaseQuantity = (id: string) => {
 setItems((prev) =>
 prev.map((item) =>
 item.id === id
@@ -43,7 +43,7 @@ quantity: Math.max(1, item.quantity - 1),
 );
 };
 
-const removeItem = (id: number) => {
+const removeItem = (id: string) => {
 setItems((prev) =>
 prev.filter((item) => item.id !== id)
 );
@@ -94,16 +94,15 @@ return ( <main className="min-h-screen bg-slate-50 pb-32"> <CartHeader />
         <PromoSection />
 
         <OrderSummary
-          subtotal={subtotal}
-          deliveryFee={deliveryFee}
-          serviceFee={serviceFee}
-          total={grandTotal}
-        />
+  subtotal={subtotal}
+  deliveryFee={deliveryFee}
+  serviceFee={serviceFee}
+/>
       </>
     )}
   </div>
 
-  <CheckoutBar total={grandTotal} />
+  
 </main>
 
 );
