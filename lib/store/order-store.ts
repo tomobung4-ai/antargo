@@ -38,20 +38,20 @@ createdAt: string;
 };
 
 type OrderStore = {
-orders: Order[];
+  orders: Order[];
 
-createOrder: (
+  addOrder: (
     order: Order
   ) => void;
 
-updateOrderStatus: (
-id: string,
-status: OrderStatus
-) => void;
+  updateOrderStatus: (
+    id: string,
+    status: OrderStatus
+  ) => void;
 
-getOrderById: (
-id: string
-) => Order | undefined;
+  getOrderById: (
+    id: string
+  ) => Order | undefined;
 };
 
 const initialOrders: Order[] = [
@@ -117,9 +117,21 @@ items: [
 export const useOrderStore =
   create<OrderStore>((set, get) => ({
     orders: initialOrders,
-createOrder: (order) =>
+    addOrder: (order) =>
   set((state) => ({
-    orders: [order, ...state.orders],
+    orders: [
+      order,
+      ...state.orders,
+    ],
+  })),
+createOrder: (
+  order: Order
+) =>
+  set((state) => ({
+    orders: [
+      order,
+      ...state.orders,
+    ],
   })),
 
     updateOrderStatus: (

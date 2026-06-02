@@ -1,63 +1,73 @@
+"use client";
+
+import { notFound } from "next/navigation";
+
 import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+  useOrderStore,
+} from "@/lib/store/order-store";
 
-import TrackingHeader from "@/components/order-tracking/tracking-header";
-import OrderStatusCard from "@/components/order-tracking/order-status-card";
-import DriverCard from "@/components/order-tracking/driver-card";
-import TrackingTimeline from "@/components/order-tracking/tracking-timeline";
-import ContactActions from "@/components/order-tracking/contact-actions";
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
-import { trackingData } from "@/lib/mock-tracking";
+export default function TrackingPage({
+  params,
+}: Props) {
+  const order = useOrderStore(
+    (state) =>
+      state.getOrderById(params.id)
+  );
 
-export default function TrackingPage() {
+  if (!order) {
+    notFound();
+  }
+
   return (
-    <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto max-w-md space-y-4 px-4 py-4">
-        <h1 className="text-2xl font-bold">
-          Lacak Pesanan
-        </h1>
+    <main className="mx-auto max-w-xl p-4">
+      <h1 className="mb-6 text-2xl font-bold">
+        Tracking Pesanan
+      </h1>
 
-        <TrackingHeader
-          orderId={trackingData.orderId}
-          restaurantName={
-            trackingData.restaurant.name
-          }
-          estimatedArrival={
-            trackingData.estimatedArrival
-          }
-        />
+      <div className="rounded-lg border p-4 space-y-3">
+        <p>
+          <strong>ID:</strong>{" "}
+          {order.id}
+        </p>
 
-        <OrderStatusCard />
+        <p>
+          <strong>Restoran:</strong>{" "}
+          {order.restaurantName}
+        </p>
 
-        <Card>
-          <CardContent className="p-0">
-            <div className="flex h-56 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-primary/20">
-              <div className="text-center">
-                <div className="mx-auto mb-3 h-16 w-16 rounded-full bg-primary/20" />
+        <p>
+          <strong>Pelanggan:</strong>{" "}
+          {order.customerName}
+        </p>
 
-                <p className="font-medium">
-                  Lokasi Driver
-                </p>
+        <p>
+          <strong>Alamat:</strong>{" "}
+          {order.customerAddress}
+        </p>
 
-                <p className="text-sm text-muted-foreground">
-                  Peta Pelacakan Pesanan
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <p>
+          <strong>Total:</strong>{" "}
+          Rp{" "}
+          {order.total.toLocaleString(
+            "id-ID"
+          )}
+        </p>
 
-        <DriverCard
-          driver={trackingData.driver}
-        />
+        <div className="pt-3">
+          <p className="font-semibold">
+            Status Pesanan
+          </p>
 
-        <ContactActions />
-
-        <TrackingTimeline
-          statuses={trackingData.statuses}
-        />
+          <div className="mt-2 rounded-lg bg-primary/10 p-3">
+            {order.status}
+          </div>
+        </div>
       </div>
     </main>
   );

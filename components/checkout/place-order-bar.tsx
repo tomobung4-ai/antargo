@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
 
 import {
   useOrderStore,
@@ -17,17 +18,23 @@ export default function PlaceOrderBar({
 }: PlaceOrderBarProps) {
   const router = useRouter();
 
-  const createOrder =
+  const addOrder =
     useOrderStore(
-      (state) => state.createOrder
+      (state) => state.addOrder
     );
 
-  const handleCheckout = () => {
+  const handleOrder = () => {
     const newOrder: Order = {
-      id: `ORDER-${Date.now()}`,
+      id:
+        "ORDER-" +
+        Date.now(),
 
-      customerName: "Customer Demo",
-      customerPhone: "081234567890",
+      customerName:
+        "Pelanggan AntarGo",
+
+      customerPhone:
+        "081234567890",
+
       customerAddress:
         "Jl. Contoh No. 123",
 
@@ -49,14 +56,15 @@ export default function PlaceOrderBar({
       items: [
         {
           id: "1",
-          name: "Nasi Goreng",
+          name:
+            "Nasi Goreng Spesial",
           quantity: 1,
           price: total,
         },
       ],
     };
 
-    createOrder(newOrder);
+    addOrder(newOrder);
 
     router.push(
       "/order-success"
@@ -72,14 +80,17 @@ export default function PlaceOrderBar({
           </p>
 
           <p className="text-xl font-bold">
-            Rp {total.toLocaleString("id-ID")}
+            Rp{" "}
+            {total.toLocaleString(
+              "id-ID"
+            )}
           </p>
         </div>
 
         <Button
           size="lg"
           className="min-w-[180px]"
-          onClick={handleCheckout}
+          onClick={handleOrder}
         >
           Pesan Sekarang
         </Button>
