@@ -3,10 +3,10 @@
 import { useMemo, useState } from "react";
 
 import {
-  merchantOrders,
-  MerchantOrder,
+  useOrderStore,
+  Order,
   OrderStatus,
-} from "@/lib/mock-merchant-orders";
+} from "@/lib/store/order-store";
 
 import {
   OrdersHeader,
@@ -26,18 +26,20 @@ import {
 } from "@/components/merchant-orders/order-detail-dialog";
 
 export default function MerchantOrdersPage() {
-  const [orders, setOrders] =
-    useState<MerchantOrder[]>(
-      merchantOrders
+  const orders = useOrderStore(
+    (state) => state.orders
+  );
+
+  const updateOrderStatus =
+    useOrderStore(
+      (state) => state.updateOrderStatus
     );
 
   const [filter, setFilter] =
     useState<OrderFilter>("all");
 
   const [selectedOrder, setSelectedOrder] =
-    useState<MerchantOrder | null>(
-      null
-    );
+    useState<Order | null>(null);
 
   const [detailOpen, setDetailOpen] =
     useState(false);
@@ -76,7 +78,7 @@ export default function MerchantOrdersPage() {
   }, [orders, filter]);
 
   const handleViewDetail = (
-    order: MerchantOrder
+    order: Order
   ) => {
     setSelectedOrder(order);
     setDetailOpen(true);
@@ -86,15 +88,9 @@ export default function MerchantOrdersPage() {
     orderId: string,
     status: OrderStatus
   ) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId
-          ? {
-              ...order,
-              status,
-            }
-          : order
-      )
+    updateOrderStatus(
+      orderId,
+      status
     );
 
     if (
@@ -111,9 +107,7 @@ export default function MerchantOrdersPage() {
   return (
     <main className="mx-auto max-w-7xl space-y-6 p-4 pb-10">
       <OrdersHeader
-        newOrders={
-          statistics.newOrders
-        }
+        newOrders={statistics.newOrders}
         preparingOrders={
           statistics.preparingOrders
         }
@@ -137,8 +131,7 @@ export default function MerchantOrdersPage() {
           </p>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Belum ada pesanan pada status
-            ini.
+            Belum ada pesanan pada status ini.
           </p>
         </div>
       ) : (

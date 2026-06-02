@@ -9,10 +9,10 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 
-import { MerchantOrder } from "@/lib/mock-merchant-orders";
+import { Order } from "@/lib/store/order-store";
 
 interface OrderDetailDialogProps {
-  order: MerchantOrder | null;
+  order: Order | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -61,7 +61,7 @@ export function OrderDetailDialog({
                 <span className="font-medium">
                   Alamat:
                 </span>{" "}
-                {order.deliveryAddress}
+                {order.customerAddress}
               </p>
             </div>
           </div>
@@ -104,29 +104,29 @@ export function OrderDetailDialog({
           <Separator />
 
           <div>
-            <h3 className="font-semibold">
-              Pembayaran
-            </h3>
+  <h3 className="font-semibold">
+    Ringkasan Pesanan
+  </h3>
 
-            <div className="mt-2 space-y-1 text-sm">
-              <p>
-                <span className="font-medium">
-                  Metode:
-                </span>{" "}
-                {order.paymentMethod}
-              </p>
+  <div className="mt-2 space-y-1 text-sm">
+    <p>
+      <span className="font-medium">
+        Restoran:
+      </span>{" "}
+      {order.restaurantName}
+    </p>
 
-              <p>
-                <span className="font-medium">
-                  Total:
-                </span>{" "}
-                Rp{" "}
-                {order.total.toLocaleString(
-                  "id-ID"
-                )}
-              </p>
-            </div>
-          </div>
+    <p>
+      <span className="font-medium">
+        Total:
+      </span>{" "}
+      Rp{" "}
+      {order.total.toLocaleString(
+        "id-ID"
+      )}
+    </p>
+  </div>
+</div>
 
           <Separator />
 
@@ -136,7 +136,7 @@ export function OrderDetailDialog({
             </h3>
 
             <p className="mt-2 text-sm text-muted-foreground">
-              {order.notes || "-"}
+              -
             </p>
           </div>
         </div>

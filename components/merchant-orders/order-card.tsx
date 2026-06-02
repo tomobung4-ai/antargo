@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import {
-  MerchantOrder,
+  Order,
   OrderStatus,
-} from "@/lib/mock-merchant-orders";
+} from "@/lib/store/order-store";
 
 import { OrderStatusBadge } from "./order-status-badge";
 
 interface OrderCardProps {
-  order: MerchantOrder;
+  order: Order;
+
   onViewDetail: (
-    order: MerchantOrder
+    order: Order
   ) => void;
+
   onStatusChange: (
     orderId: string,
     status: OrderStatus
@@ -173,7 +175,7 @@ export function OrderCard({
             </p>
 
             <p className="font-medium">
-              {order.orderTime}
+              {order.createdAt}
             </p>
           </div>
 
